@@ -15,10 +15,11 @@ import {
   Text,
   CloseIcon,
   Spacer,
-  HStack,
+  HStack
 } from "native-base";
 import {connect} from 'react-redux';
-import {withNavigation} from 'react-navigation'
+import {withNavigation} from 'react-navigation';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 String.prototype.replaceAll = function (stringToFind, stringToReplace) {
     if (stringToFind === stringToReplace) return this;
@@ -48,14 +49,13 @@ function mapDispatchToProps(dispatch){
 
 const gamePhrases = [
   {category: '' ,  text: ' bevi - sorsi ', malus: 3, type:''},
-  {category: '' ,  text: ' se usi lo sparafoglie bevi - sorsi', malus: 4, type: ''},
+  {category: '' ,  text: ' se hai gli occhi bevi - sorsi', malus: 4, type: ''},
   {category: '' ,  text: ' se se il piu vecchio bevi - sorsi', malus: 1, type: ''},
   {category: '' ,  text: ' gioca a pollicione con *, chi perde beve - sorsi', malus: 10, type: ''}
 ]
 
 const colors = ["#e879f9", "#818cf8", "#0284c7", "#059669", "#a3e635"]
 
-//this.props.players[Math.floor(Math.random() * (this.props.players.length - 1))]
 
 
 
@@ -69,7 +69,6 @@ class Game extends React.Component {
       sip_number: Math.floor(Math.random() * 10) + 1,
       phrase: gamePhrases[Math.floor(Math.random() * (gamePhrases.length))].text,
       background: colors[Math.floor(Math.random() * 1000) % colors.length],
-
 
     }
 
@@ -116,7 +115,6 @@ class Game extends React.Component {
   add_player = () =>{
     this.props.add_player(this.state.player_name)
 
-
   }
 
   render(){
@@ -124,33 +122,38 @@ class Game extends React.Component {
     return(
       <NativeBaseProvider>
       <Box bg={this.state.background}>
-      <HStack bg={this.state.background} justifyContent="center" alignItems="flex-start" mt="20">
-      <Flex direction="column" >
+      <VStack bg={this.state.background} space={4} justifyContent="center" alignItems="center" mt="20">
+          {this.props.players.map(player => (
+            <View key={player.name}>
+            <HStack space={5} alignItems="center">
+              <Text fontSize="md" style={{color:'white', fontSize: 25}}>
+                {player.name + ': '}
+              </Text>
+              <Text style={{color:'white', fontSize: 25}} fontWeight="bold">
+                {player.score}
+              </Text>
+              <Icon name="beer" size={30} color="#900" />
 
-        {this.props.players.map(player => (
-          <View key={player.name}>
-          <Text fontSize="md" style={{color:'white'}}>
-            {player.name + ": " + player.score + ' sorsi'}
-          </Text>
-          </View>
-        ))}
-        </Flex>
-      </HStack>
+              </HStack>
+            </View>
+          ))}
+      </VStack>
       </Box>
       <Center flex={1} bg={this.state.background}>
-        <Box>
         <TouchableOpacity onPress={this.next}>
-          <Flex direction="row" align="center" justify="center">
-            <Center>
-              <Text fontSize="2xl" style={{color:'white'}}> { this.state.player.name + "," + this.state.phrase.replace('-', this.state.sip_number).replace('*', this.state.players[Math.floor(Math.random()* 1000 )  % this.state.players.length].name )} </Text>
-              </Center>
-          </Flex>
+          <Center _text={{textAlign:'center'}} p="10">
+              <Text fontSize="3xl" fontWeight="bold" style={{color:'white'}}>
+                { this.state.player.name + "," +
+                  this.state.phrase.replace('-', this.state.sip_number).replace('*', this.state.players[Math.floor(Math.random()* 1000 )  %
+                  this.state.players.length].name
+                )}
+              </Text>
+          </Center>
           </TouchableOpacity>
-        </Box>
       </Center>
       <HStack justifyContent="center" alignItems="center" bg={this.state.background}>
         <Button  mb="0" bg={'transparent'} size="md" style={{width: '50%'}} onPress={() => this.props.modify_player_score(this.state.player, this.state.player.score + this.state.sip_number)}>
-          {"Segna " + this.state.sip_number + " sorsi a " + this.state.player.name}
+            <Text style={{fontSize:20, color:'white'}}> {"Segna " + this.state.sip_number + " sorsi a " + this.state.player.name} </Text>
         </Button>
       </HStack>
 
