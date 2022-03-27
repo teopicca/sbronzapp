@@ -36,7 +36,8 @@ String.prototype.replaceAll = function (stringToFind, stringToReplace) {
 
 function mapStateToProps(state){
   return {
-    players: state.players
+    players: state.players,
+    phrases: state.phrases,
   }
 }
 
@@ -64,10 +65,13 @@ class Game extends React.Component {
     super(props);
     this.state = {
       direction: 'column',
-      player: this.props.players[Math.floor(Math.random() * 1000 )  % this.props.players.length],
+      player_selected: 0,
+      phrase_selected: 0,
+      player: this.props.players[0],
       players: this.props.players,
+      other_players: this.props.players.filter((p, i) => i !== 0),
       sip_number: Math.floor(Math.random() * 10) + 1,
-      phrase: gamePhrases[Math.floor(Math.random() * (gamePhrases.length))].text,
+      phrase: this.props.phrases[0].text,
       background: colors[Math.floor(Math.random() * 1000) % colors.length],
 
     }
@@ -99,11 +103,32 @@ class Game extends React.Component {
   }
 
   next = () => {
+
+    let player_selected = this.state.player_selected
+    let phrase_selected = this.state.phrase_selected
+
+    if(player_selected == this.state.players.length ){
+      player_selected = 0
+    }
+    else{
+      player_selected += 1
+    }
+
+    if(phrase_selected == this.props.phrases.length - 1 ){
+      phrase_selected = 0
+    }
+    else{
+      phrase_selected += 1
+    }
+
+
     this.setState({
-      player: this.props.players[Math.floor(Math.random() * 1000 )  % this.props.players.length],
-      players: this.props.players,
-      sip_number: Math.floor(Math.random() * 10) + 1,
-      phrase: gamePhrases[Math.floor(Math.random() * (gamePhrases.length))].text,
+      player: this.props.players[player_selected],
+      player_selected: player_selected,
+      other_players: this.props.players.filter((p, i) => i !== player_selected),
+      sip_number: Math.floor(Math.random() * 4) + 1,
+      phrase_selected: phrase_selected,
+      phrase: this.props.phrases[phrase_selected].text,
       background: colors[Math.floor(Math.random() * 1000) % colors.length],
     })
   }
@@ -143,9 +168,10 @@ class Game extends React.Component {
         <TouchableOpacity onPress={this.next}>
           <Center _text={{textAlign:'center'}} p="10">
               <Text fontSize="3xl" fontWeight="bold" style={{color:'white'}}>
-                { this.state.player.name + "," +
-                  this.state.phrase.replace('-', this.state.sip_number).replace('*', this.state.players[Math.floor(Math.random()* 1000 )  %
-                  this.state.players.length].name
+                {
+
+                  this.props.players[this.state.player_selected].name + "," +
+                  this.state.phrase.replace('-', this.state.sip_number).replace('*', this.state.other_players[Math.floor(Math.random()* 1000 )  %  (this.props.players.length - 1)].name
                 )}
               </Text>
           </Center>

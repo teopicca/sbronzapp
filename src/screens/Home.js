@@ -19,19 +19,23 @@ import {
 } from "native-base";
 import {connect} from 'react-redux';
 import {withNavigation} from 'react-navigation'
+import Icon from 'react-native-vector-icons/FontAwesome5';
+
 
 
 
 function mapStateToProps(state){
   return {
-    players: state.players
+    players: state.players,
+    phrases: state.phrases,
   }
 }
 
 function mapDispatchToProps(dispatch){
   return{
     add_player : (player_name) => dispatch({type: 'ADD_PLAYER', player_name: player_name}),
-    remove_player: (player) => dispatch({type: 'REMOVE_PLAYER', player: player})
+    remove_player: (player) => dispatch({type: 'REMOVE_PLAYER', player: player}),
+    shuffle_phrases: () => dispatch({type:'SHUFFLE_PHRASES'})
   }
 }
 
@@ -59,8 +63,19 @@ class Home extends React.Component {
   add_player = () =>{
     this.props.add_player(this.state.player_name)
 
+  }
+
+  play = () => {
+
+    this.props.shuffle_phrases()
+    this.props.navigation.navigate('Game')
+
+
+
+
 
   }
+
 
   render(){
     return(
@@ -125,13 +140,15 @@ class Home extends React.Component {
              </Center>
            </Center>
            <HStack justifyContent="center" alignItems="center">
-             <Button disabled={!this.props.players.length > 1}   size="lg" style={{width: '100%'}} onPress={() =>  this.props.navigation.navigate('Game')}>
+           <Button leftIcon={<Icon name="dice" size="sm"/>}  size="lg" style={{width: '50%'}}  colorScheme="secondary" onPress={() =>  this.props.navigation.navigate('GamePhrases')}>
+             Frasi
+           </Button>
+             <Button isDisabled={this.props.players.length < 2}   size="lg" style={{width: '50%'}} onPress={this.play}>
                Gioca
              </Button>
            </HStack>
 
          </NativeBaseProvider>
-
     )
   }
 

@@ -19,10 +19,25 @@ import {createStore, combineReducer} from 'redux';
 import Home from './src/screens/Home.js';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-import Game from './src/screens/Game.js'
+import Game from './src/screens/Game.js';
+import GamePhrases from './src/screens/GamePhrases.js';
 
 const initStore = {
-  players: []
+  players: [],
+  phrases: [
+    {category: '' ,  text: ' bevi - sorsi ', malus: 3, type:''},
+    {category: '' ,  text: ' se hai gli occhi bevi - sorsi', malus: 4, type: ''},
+    {category: '' ,  text: ' se se il piu vecchio bevi - sorsi', malus: 1, type: ''},
+    {category: '' ,  text: ' gioca a pollicione con *, chi perde beve - sorsi', malus: 10, type: ''},
+    {category: '' ,  text: ' bevi - sorsi ', malus: 3, type:''},
+    {category: '' ,  text: ' se hai gli occhi bevi - sorsi', malus: 4, type: ''},
+    {category: '' ,  text: ' se se il piu vecchio bevi - sorsi', malus: 1, type: ''},
+    {category: '' ,  text: ' gioca a pollicione con *, chi perde beve - sorsi', malus: 10, type: ''},
+    {category: '' ,  text: ' bevi - sorsi ', malus: 3, type:''},
+    {category: '' ,  text: ' se hai gli occhi bevi - sorsi', malus: 4, type: ''},
+    {category: '' ,  text: ' se se il piu vecchio bevi - sorsi', malus: 1, type: ''},
+    {category: '' ,  text: ' gioca a pollicione con *, chi perde beve - sorsi', malus: 10, type: ''},
+  ],
 }
 
 const appReducer = (state = initStore, action) => {
@@ -51,15 +66,37 @@ const appReducer = (state = initStore, action) => {
       player.name == action.player.name ? player : player
     )
 
-    console.log(players)
-
-
       return {
         ...state,
         players: state.players.map(player =>
           player.name == action.player.name ? {...player, score: action.score} : player
         )
       }
+
+
+    case 'ADD_PHRASE':
+
+      let phrases_text = action.phrases.split('\n')
+      console.log(phrases_text)
+      let phrases = []
+      phrases_text.map(p => {
+        phrases.push(
+          {category: '' ,  text: p, malus: 0, type:''},
+        )
+      })
+
+        return {
+          ...state,
+          phrases: [...state.phrases, ...phrases]
+        }
+
+    case 'SHUFFLE_PHRASES':
+      return {
+        ...state,
+        phrases: state.phrases.sort(() => Math.random() - 0.5)
+      }
+
+
 
     default:
       return state
@@ -96,11 +133,22 @@ class GameScreen extends React.Component {
       </Provider>
     )
   }
-
-
-
-
 }
+
+class GamePhrasesScreen extends React.Component {
+  static navigationOptions = {
+    headerShown: false
+  }
+
+  render(){
+    return(
+      <Provider store={store}>
+        <GamePhrases />
+      </Provider>
+    )
+  }
+}
+
 
 const AppNavigator = createStackNavigator({
   Home : {
@@ -108,6 +156,9 @@ const AppNavigator = createStackNavigator({
   },
   Game: {
     screen: GameScreen
+  },
+  GamePhrases: {
+    screen: GamePhrasesScreen
   }
 })
 
